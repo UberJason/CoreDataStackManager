@@ -1,0 +1,6 @@
+use_frameworks!
+target 'CoreDataStackManager_Tests' do
+  pod 'CoreDataStackManager', :path => '../'
+  
+  
+end

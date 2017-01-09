@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  CoreDataStackManager: 36e77a7625efdc673c52d2ce2648063dc25b941d
+  CoreDataStackManager: aeed0aa24d00424342b4e55f4099d881f9e5dea9
 
 PODFILE CHECKSUM: d60747b9e0e110ce2477c2ddccf168d14cf46f7e
 

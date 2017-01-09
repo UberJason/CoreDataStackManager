@@ -24,11 +24,11 @@ class CoreDataStackManager: NSObject {
     }
     
     convenience init(modelName: String) {
-        initializeCoreData(modelName: String)
+        self.init()
+        initializeCoreData(modelName: modelName)
     }
     
     func initializeCoreData(modelName: String = "Model") {
-        let appName = Bundle.main.appName
         guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)

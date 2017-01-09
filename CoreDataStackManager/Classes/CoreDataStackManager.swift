@@ -1,6 +1,6 @@
 //
 //  CoreDataStack.swift
-//  TrackIt
+//  CoreDataStackManager
 //
 //  Created by Jason Ji on 5/9/16.
 //  Copyright © 2016 Jason Ji. All rights reserved.
@@ -23,12 +23,17 @@ class CoreDataStackManager: NSObject {
         initializeCoreData()
     }
     
-    func initializeCoreData() {
-        guard let modelURL = Bundle.main.url(forResource: "TrackIt", withExtension: "momd") else { fatalError("Invalid model URL") }
+    convenience init(modelName: String) {
+        initializeCoreData(modelName: String)
+    }
+    
+    func initializeCoreData(modelName: String = "Model") {
+        let appName = Bundle.main.appName
+        guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
-        let storeURL: URL = applicationDocumentsDirectory.appendingPathComponent("TrackIt.sqlite")
+        let storeURL: URL = applicationDocumentsDirectory.appendingPathComponent("\(modelName).sqlite")
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]

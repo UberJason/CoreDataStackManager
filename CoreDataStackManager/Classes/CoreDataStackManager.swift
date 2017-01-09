@@ -9,26 +9,27 @@
 import UIKit
 import CoreData
 
-class CoreDataStackManager: NSObject {
-    static let sharedInstance = CoreDataStackManager()
+public class CoreDataStackManager: NSObject {
+    public static let sharedInstance = CoreDataStackManager()
     
-    var applicationDocumentsDirectory = {
+    private var applicationDocumentsDirectory = {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }()
-    let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-    fileprivate let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+    public let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    private let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+    private let modelName: String
     
-    override init() {
+    public init(modelName: String) {
+        self.modelName = modelName
         super.init()
         initializeCoreData()
     }
     
-    convenience init(modelName: String) {
-        self.init()
-        initializeCoreData(modelName: modelName)
+    public override convenience init() {
+        self.init(modelName: "Model")
     }
     
-    func initializeCoreData(modelName: String = "Model") {
+    private func initializeCoreData() {
         guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -46,7 +47,7 @@ class CoreDataStackManager: NSObject {
         managedObjectContext.parent = privateContext
     }
     
-    func save() {
+    public func save() {
         if !privateContext.hasChanges && !self.managedObjectContext.hasChanges {
             return
         }
@@ -66,7 +67,7 @@ class CoreDataStackManager: NSObject {
         }
     }
     
-    func saveWithTemporaryContext(_ context: NSManagedObjectContext) {
+    public func saveWithTemporaryContext(_ context: NSManagedObjectContext) {
         // Assumes the passed context has our managedObjectContext as its parent.
         if !context.hasChanges {
             return

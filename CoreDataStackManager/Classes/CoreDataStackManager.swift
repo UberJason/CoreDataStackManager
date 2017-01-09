@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-public class CoreDataStackManager: NSObject {
+open class CoreDataStackManager: NSObject {
     public static let sharedInstance = CoreDataStackManager()
     
     private var applicationDocumentsDirectory = {

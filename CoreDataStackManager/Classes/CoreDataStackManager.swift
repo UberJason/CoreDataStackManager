@@ -47,6 +47,13 @@ public class CoreDataStackManager: NSObject {
         managedObjectContext.parent = privateContext
     }
     
+    public func createTemporaryContext() -> NSManagedObjectContext {
+        let temporaryContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        temporaryContext.parent = managedObjectContext
+        return temporaryContext
+    }
+    
+    
     public func save() {
         if !privateContext.hasChanges && !self.managedObjectContext.hasChanges {
             return

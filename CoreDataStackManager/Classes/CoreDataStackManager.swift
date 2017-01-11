@@ -18,15 +18,17 @@ open class CoreDataStackManager: NSObject {
     public let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     private let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
     private let modelName: String
+    private let storeType: String
     
-    public init(modelName: String) {
+    public init(modelName: String, storeType: String) {
         self.modelName = modelName
+        self.storeType = storeType
         super.init()
         initializeCoreData()
     }
     
     public override convenience init() {
-        self.init(modelName: "Model")
+        self.init(modelName: "Model", storeType: NSSQLiteStoreType)
     }
     
     private func initializeCoreData() {
@@ -38,7 +40,7 @@ open class CoreDataStackManager: NSObject {
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]
-            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeURL, options: options)
+            try coordinator.addPersistentStore(ofType: storeType, configurationName: nil, at: storeURL, options: options)
         }catch {
             fatalError("Could not add the persistent store: \(error).")
         }

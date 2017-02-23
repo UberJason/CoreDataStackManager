@@ -19,20 +19,18 @@ open class CoreDataStackManager: NSObject {
     private let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
     private let modelName: String
     private let storeType: String
+    private let bundle: Bundle
     
-    public init(modelName: String, storeType: String) {
+    public init(modelName: String = "Model", storeType: String = NSSQLiteStoreType, bundle: Bundle = Bundle.main) {
         self.modelName = modelName
         self.storeType = storeType
+        self.bundle = bundle
         super.init()
         initializeCoreData()
     }
     
-    public override convenience init() {
-        self.init(modelName: "Model", storeType: NSSQLiteStoreType)
-    }
-    
     private func initializeCoreData() {
-        guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
+        guard let modelURL = bundle.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         

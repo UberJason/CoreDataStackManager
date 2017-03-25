@@ -1,5 +1,5 @@
 PODS:
-  - CoreDataStackManager (0.1.0)
+  - CoreDataStackManager (0.5.0)
 
 DEPENDENCIES:
   - CoreDataStackManager (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  CoreDataStackManager: aeed0aa24d00424342b4e55f4099d881f9e5dea9
+  CoreDataStackManager: 7d3ebc8cf4cc9ca34c6fb9f851298dda49526e9d
 
-PODFILE CHECKSUM: d60747b9e0e110ce2477c2ddccf168d14cf46f7e
+PODFILE CHECKSUM: 40aa1e1521df8f85145458ddb2256a31982dbf27
 
 COCOAPODS: 1.1.1

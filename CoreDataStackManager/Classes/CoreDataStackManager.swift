@@ -9,6 +9,10 @@
 import UIKit
 import CoreData
 
+public enum StoreLocation {
+    case standard, appGroup(String)
+}
+
 open class CoreDataStackManager: NSObject {
     public static let sharedInstance = CoreDataStackManager()
     
@@ -20,11 +24,13 @@ open class CoreDataStackManager: NSObject {
     private let modelName: String
     private let storeType: String
     private let bundle: Bundle
+    private let storeLocation: StoreLocation
     
-    public init(modelName: String = "Model", storeType: String = NSSQLiteStoreType, bundle: Bundle = Bundle.main) {
+    public init(modelName: String = "Model", storeType: String = NSSQLiteStoreType, bundle: Bundle = Bundle.main, storeLocation: StoreLocation = .standard) {
         self.modelName = modelName
         self.storeType = storeType
         self.bundle = bundle
+        self.storeLocation = storeLocation
         super.init()
         initializeCoreData()
     }
@@ -34,7 +40,18 @@ open class CoreDataStackManager: NSObject {
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
-        let storeURL: URL = applicationDocumentsDirectory.appendingPathComponent("\(modelName).sqlite")
+        let storeURL: URL
+        
+        switch storeLocation {
+        case .standard:
+            storeURL = applicationDocumentsDirectory.appendingPathComponent("\(modelName).sqlite")
+        case .appGroup(let identifier):
+            guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {
+                fatalError("Could not find the container for security group: \(identifier). Did you add the App Groups capability to your app's provisioning profile?")
+            }
+            storeURL = containerURL.appendingPathComponent("\(modelName).sqlite")
+        }
+        
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]

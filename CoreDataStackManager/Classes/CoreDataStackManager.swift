@@ -71,8 +71,9 @@ open class CoreDataStackManager: NSObject {
     }
     
     
-    public func save() {
-        if !privateContext.hasChanges && !self.managedObjectContext.hasChanges {
+    public func save(andCheckForChanges check: Bool = true) {
+        
+        if check && !managedObjectContext.hasChanges {
             return
         }
         managedObjectContext.performAndWait {
@@ -99,7 +100,7 @@ open class CoreDataStackManager: NSObject {
         context.performAndWait {
             do {
                 try context.save()
-                self.save()
+                self.save(andCheckForChanges: false)
             } catch let error as NSError {
                 print(error.localizedDescription)
             }

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CoreDataStackManager'
-  s.version          = '0.6.0'
+  s.version          = '0.6.1'
   s.summary          = 'A simple class that sets up and manages a Core Data stack.'
   s.description      = <<-DESC
 A simple class that sets up and manages a Core Data stack. A publicly-exposed main queue NSManagedObjectContext uses a private queue NSManagedContext as its parent, and the private queue context is connected to the persistent store coordinator to save data. Also provides a convenience method for saving temporary contexts connected to our main queue context.

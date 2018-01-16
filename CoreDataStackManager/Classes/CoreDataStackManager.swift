@@ -64,14 +64,14 @@ open class CoreDataStackManager: NSObject {
         managedObjectContext.parent = privateContext
     }
     
-    public func createTemporaryContext() -> NSManagedObjectContext {
+    open func createTemporaryContext() -> NSManagedObjectContext {
         let temporaryContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         temporaryContext.parent = managedObjectContext
         return temporaryContext
     }
     
     
-    public func save(andCheckForChanges check: Bool = true) {
+    open func save(andCheckForChanges check: Bool = true) {
         
         if check && !managedObjectContext.hasChanges {
             return
@@ -92,7 +92,7 @@ open class CoreDataStackManager: NSObject {
         }
     }
     
-    public func saveWithTemporaryContext(_ context: NSManagedObjectContext) {
+    open func saveWithTemporaryContext(_ context: NSManagedObjectContext) {
         // Assumes the passed context has our managedObjectContext as its parent.
         if !context.hasChanges {
             return

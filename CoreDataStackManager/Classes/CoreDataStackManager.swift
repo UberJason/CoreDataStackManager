@@ -16,31 +16,34 @@ public enum StoreLocation {
 open class CoreDataStackManager: NSObject {
     public static let sharedInstance = CoreDataStackManager()
     
-    private var applicationDocumentsDirectory = {
+    public var applicationDocumentsDirectory = {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }()
     public let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     private let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-    private let modelName: String
-    private let storeType: String
-    private let bundle: Bundle
-    private let storeLocation: StoreLocation
+    
+    public let modelName: String
+    public let storeType: String
+    public let bundle: Bundle
+    public let storeLocation: StoreLocation
+    public let modelURL: URL
+    public private(set) var storeURL: URL?
     
     public init(modelName: String = "Model", storeType: String = NSSQLiteStoreType, bundle: Bundle = Bundle.main, storeLocation: StoreLocation = .standard) {
         self.modelName = modelName
         self.storeType = storeType
         self.bundle = bundle
         self.storeLocation = storeLocation
+        guard let modelURL = bundle.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
+        self.modelURL = modelURL
         super.init()
+        
         initializeCoreData()
     }
     
     private func initializeCoreData() {
-        guard let modelURL = bundle.url(forResource: modelName, withExtension: "momd") else { fatalError("Invalid model URL") }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-        
-        let storeURL: URL
         
         switch storeLocation {
         case .standard:

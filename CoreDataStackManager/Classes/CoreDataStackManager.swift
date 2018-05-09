@@ -74,7 +74,7 @@ open class CoreDataStackManager: NSObject {
     }
     
     
-    open func save(andCheckForChanges check: Bool = true) {
+    open func save(andCheckForChanges check: Bool = true, fullySynchronous: Bool = false) {
         
         if check && !managedObjectContext.hasChanges {
             return
@@ -82,12 +82,18 @@ open class CoreDataStackManager: NSObject {
         managedObjectContext.performAndWait {
             do {
                 try self.managedObjectContext.save()
-                self.privateContext.perform {
+                let saveBlock = { [weak self] in
                     do {
-                        try self.privateContext.save()
+                        try self?.privateContext.save()
                     } catch let error as NSError {
                         print(error.localizedDescription)
                     }
+                }
+                if fullySynchronous {
+                    privateContext.performAndWait(saveBlock)
+                }
+                else {
+                    privateContext.perform(saveBlock)
                 }
             } catch let error as NSError {
                 print(error.localizedDescription)

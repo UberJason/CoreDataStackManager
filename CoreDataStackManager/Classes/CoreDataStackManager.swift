@@ -16,7 +16,7 @@ public enum StoreLocation {
 open class CoreDataStackManager: NSObject {
     public static let sharedInstance = CoreDataStackManager()
     
-    public var applicationDocumentsDirectory = {
+    public static var applicationDocumentsDirectory = {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }()
     public let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
@@ -28,6 +28,7 @@ open class CoreDataStackManager: NSObject {
     public let storeLocation: StoreLocation
     public let modelURL: URL
     public private(set) var storeURL: URL?
+    public var coordinator: NSPersistentStoreCoordinator?
     
     public init(modelName: String = "Model", storeType: String = NSSQLiteStoreType, bundle: Bundle = Bundle.main, storeLocation: StoreLocation = .standard) {
         self.modelName = modelName
@@ -43,28 +44,40 @@ open class CoreDataStackManager: NSObject {
     
     private func initializeCoreData() {
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else { fatalError("Invalid model") }
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
         switch storeLocation {
         case .standard:
-            storeURL = applicationDocumentsDirectory.appendingPathComponent("\(modelName).sqlite")
+            storeURL = type(of: self).standardStoreURL(forModelNamed: modelName)
         case .appGroup(let identifier):
-            guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {
+            storeURL = type(of: self).appGroupURL(forModelNamed: modelName, securityGroupIdentifier: identifier)
+            guard storeURL != nil else {
                 fatalError("Could not find the container for security group: \(identifier). Did you add the App Groups capability to your app's provisioning profile?")
             }
-            storeURL = containerURL.appendingPathComponent("\(modelName).sqlite")
         }
         
         do {
             let options = [NSMigratePersistentStoresAutomaticallyOption: true,
                            NSInferMappingModelAutomaticallyOption: true]
-            try coordinator.addPersistentStore(ofType: storeType, configurationName: nil, at: storeURL, options: options)
-        }catch {
+            try coordinator?.addPersistentStore(ofType: storeType, configurationName: nil, at: storeURL, options: options)
+        } catch {
             fatalError("Could not add the persistent store: \(error).")
         }
         
         privateContext.persistentStoreCoordinator = coordinator
         managedObjectContext.parent = privateContext
+    }
+
+    public static func standardStoreURL(forModelNamed name: String) -> URL? {
+        return CoreDataStackManager.applicationDocumentsDirectory.appendingPathComponent("\(name).sqlite")
+    }
+    
+    public static func appGroupURL(forModelNamed name: String, securityGroupIdentifier identifier: String) -> URL? {
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier) else {
+            print("Could not find the container for security group: \(identifier). Did you add the App Groups capability to your app's provisioning profile?")
+            return nil
+        }
+        return containerURL.appendingPathComponent("\(name).sqlite")
     }
     
     open func createTemporaryContext() -> NSManagedObjectContext {

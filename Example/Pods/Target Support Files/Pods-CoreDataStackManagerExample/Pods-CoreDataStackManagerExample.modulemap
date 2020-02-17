@@ -1,6 +1,0 @@
-framework module Pods_CoreDataStackManagerExample {
-  umbrella header "Pods-CoreDataStackManagerExample-umbrella.h"
-
-  export *
-  module * { export * }
-}

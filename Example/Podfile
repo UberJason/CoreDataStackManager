@@ -1,6 +1,0 @@
-use_frameworks!
-target 'CoreDataStackManagerExample' do
-  pod 'CoreDataStackManager', :path => '../'
-  
-  
-end

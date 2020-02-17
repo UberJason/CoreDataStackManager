@@ -4,10 +4,6 @@
 [![License](https://img.shields.io/cocoapods/l/CoreDataStackManager.svg?style=flat)](http://cocoapods.org/pods/CoreDataStackManager)
 [![Platform](https://img.shields.io/cocoapods/p/CoreDataStackManager.svg?style=flat)](http://cocoapods.org/pods/CoreDataStackManager)
 
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
 ## Requirements
 
 ## Installation

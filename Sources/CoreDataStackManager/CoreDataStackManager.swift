@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jason Ji. All rights reserved.
 //
 
-import UIKit
 import CoreData
 
 public enum StoreLocation {

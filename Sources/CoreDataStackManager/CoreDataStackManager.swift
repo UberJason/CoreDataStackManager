@@ -12,8 +12,8 @@ public enum StoreLocation {
     case standard, appGroup(String)
 }
 
-open class CoreDataStackManager: NSObject {
-    public static let sharedInstance = CoreDataStackManager()
+open class CDStackManager: NSObject {
+    public static let sharedInstance = CDStackManager()
     
     public static var applicationDocumentsDirectory = {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
@@ -68,7 +68,7 @@ open class CoreDataStackManager: NSObject {
     }
 
     public static func standardStoreURL(forModelNamed name: String) -> URL? {
-        return CoreDataStackManager.applicationDocumentsDirectory.appendingPathComponent("\(name).sqlite")
+        return CDStackManager.applicationDocumentsDirectory.appendingPathComponent("\(name).sqlite")
     }
     
     public static func appGroupURL(forModelNamed name: String, securityGroupIdentifier identifier: String) -> URL? {
